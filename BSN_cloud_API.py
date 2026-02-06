@@ -10,6 +10,7 @@ import base64
 
 # Global Variables
 _current_login = None
+_configured_credentials = None
 
 # Classes
 @dataclass
@@ -2747,4 +2748,5 @@ def set_display_white_balance(serial_number: str, red_balance: int,
         }
     }
     
+
     return _put_request(url=url, params=params, payload=payload)
