@@ -346,7 +346,7 @@ else:
 
 ## Requirements
 
-- Python 3.7+
+- Python 3.10+
 - `requests` - HTTP library
 - `python-dotenv` - Environment variable management
 
