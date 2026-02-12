@@ -382,7 +382,7 @@ For issues and questions:
 ## Changelog
 
 ### Version 1.0.0 (Initial Release)
-- Complete implementation of BSN Cloud API endpoints
+- Complete implementation of rDWS BSN Cloud API endpoints
 - Automatic authentication and token renewal
 - Support for all device control operations
 - File management capabilities
