@@ -349,6 +349,245 @@ def update_setup(setup_object:str, username:str | None=None) -> dict:
     
     return _put_request(url=url, raw_data=setup_object)
 
+# Provisioning Endpoints
+def get_provisioning_records(sort_serial:bool=True, page_number:int=1, page_size:int=100) -> dict:
+    """
+    Gets a dictionary of all provisioning records from the BSN Cloud API. Please note that this endpoint is paginated and this request needs to be repeated to get all records with continued page number.\n
+    Args:
+        sort_serial (bool): Whether to sort the records by serial number (default: True)\n
+        page_number (int): The page number to retrieve (default: 1)\n
+        page_size (int): The number of records per page (default: 100)
+    """
+    url = f'https://provision.bsn.cloud/rest-device/v2/device/'
+    network = _load_credentials()[2]
+    params = {
+        "query[NetworkName]": network,
+        "sort[SerialNumber]": "1" if sort_serial else "0",
+        "page[pageNum]": str(page_number),
+        "page[pageSize]": str(page_size)
+    }
+    return _get_request(url=url, params=params)
+
+def get_provisioning_record(record_id:str | None=None, serial_number:str | None=None) -> dict:
+    """Gets a single provisioning record by serial number from the BSN Cloud API.
+    Args:
+        record_id (str | None): The unique identifier of the device record to retrieve.
+        serial_number (str | None): The serial number of the device to retrieve.
+        
+    If both record_id and serial_number are provided, record_id will be used.
+    
+    Returns:
+        dict: The provisioning record data or an error dict.
+
+    Raises:
+    """
+    if not record_id and not serial_number:
+        raise ValueError("Either 'record_id' or 'serial_number' must be provided.")
+    if record_id:
+        params = {"_id": record_id}
+    else:   
+        params = {"serial": serial_number}
+    url = f'https://provision.bsn.cloud/rest-device/v2/device/'
+    return _get_request(url=url, params=params)
+
+def create_provisioning_record(serial_number:str, username:str, name:str | None=None, description:str | None=None, setup_id:str | None=None, setup_name:str | None=None, url:str | None=None, model:str | None=None, userdata:str | None=None) -> dict:
+    '''
+    Creates a new provisioning record in the BSN Cloud API.
+    
+    Args:
+        serial_number (str): The serial number of the device to provision.
+        username (str): The login of the person who owns the record. 
+            Note that the person may or may not be registered in BSN.Cloud.
+        name (str, optional): The name of the device. If not provided, 
+            the name provided in the referenced setup package will be used.
+        description (str, optional): The description of the device. If not provided,
+            the description provided in the referenced setup package will be used.
+        setup_id (str, optional): The unique identifier of the setup package 
+            stored in B-Deploy and managed using the PSS API.
+        setup_name (str, optional): The descriptive name of a setup package 
+            stored in B-Deploy and managed using the PSS API.
+        url (str, optional): The URL from which the player will download 
+            its presentation as part of the final provisioning step.
+        model (str, optional): The model of the player. If not provided, 
+            the model will be determined automatically based on the serial number.
+        userdata (str, optional): Allows you to provide additional attributes 
+            to a custom setup package.
+    
+    Returns:
+        dict: Response from the BSN.cloud API or error dict.
+    
+    Raises:
+        ValueError: If neither setup_id nor setup_name is provided.
+    
+    Example:
+        >>> create_provisioning_record(
+        ...     serial_number="ABC123",
+        ...     username="admin",
+        ...     setup_id="12345",
+        ...     name="Lobby Display"
+        ... )
+    '''
+    if not setup_id and not setup_name:
+        raise ValueError(
+            "Either 'setup_id' or 'setup_name' must be provided."
+        )
+
+    network = _load_credentials()[2]
+    api_url = f'https://provision.bsn.cloud/rest-device/v2/device/'
+
+    payload = {
+        "username": username,
+        "serial": serial_number,
+        "NetworkName": network,
+    }
+    if name:
+        payload["name"] = name
+    if description:
+        payload["description"] = description
+    if setup_id:
+        payload["setupId"] = setup_id
+    if setup_name:
+        payload["setupName"] = setup_name
+    if url:
+        payload["url"] = url
+    if model:
+        payload["model"] = model
+    if userdata:
+        payload["userdata"] = userdata
+
+    return _post_request(url=api_url, payload=payload)
+
+def update_provisioning_record(
+    record_id: str,
+    serial_number: str,
+    username: str,
+    name: str | None = None,
+    description: str | None = None,
+    setup_id: str | None = None,
+    setup_name: str | None = None,
+    url: str | None = None,
+    model: str | None = None,
+    userdata: str | None = None
+) -> dict:
+    '''
+    Updates an existing provisioning record in the BSN Cloud API.
+    
+    Args:
+        record_id (str): The unique identifier (a 24-digit hexadecimal number) 
+            of the device object.
+        serial_number (str): The serial number of the device to provision.
+        username (str): The login of the person who owns the record. 
+            Note that the person may or may not be registered in BSN.Cloud.
+        name (str, optional): The name of the device. If not provided, 
+            the name provided in the referenced setup package will be used.
+        description (str, optional): The description of the device. If not provided,
+            the description provided in the referenced setup package will be used.
+        setup_id (str, optional): The unique identifier of the setup package 
+            stored in B-Deploy and managed using the PSS API.
+        setup_name (str, optional): The descriptive name of a setup package 
+            stored in B-Deploy and managed using the PSS API.
+        url (str, optional): The URL from which the player will download 
+            its presentation as part of the final provisioning step.
+        model (str, optional): The model of the player. If not provided, 
+            the model will be determined automatically based on the serial number.
+        userdata (str, optional): Allows you to provide additional attributes 
+            to a custom setup package.
+    
+    Returns:
+        dict: Response from the BSN.cloud API or error dict.
+    
+    Raises:
+        ValueError: If neither setup_id nor setup_name is provided.
+    
+    Example:
+        >>> update_provisioning_record(
+        ...     record_id="507f1f77bcf86cd799439011",
+        ...     serial_number="ABC123",
+        ...     username="admin",
+        ...     setup_id="12345",
+        ...     name="Updated Lobby Display"
+        ... )
+    '''
+    # Validate that at least one setup reference is provided
+    if not setup_id and not setup_name:
+        raise ValueError(
+            "Either 'setup_id' or 'setup_name' must be provided."
+        )
+    
+    # Get network from credentials
+    network = _load_credentials()[2]
+    
+    # Build API endpoint URL (renamed to avoid collision with 'url' parameter)
+    api_url = 'https://provision.bsn.cloud/rest-device/v2/device/'
+    
+    # Build payload
+    payload = {
+        "_id": record_id,
+        "username": username,
+        "serial": serial_number,
+        "NetworkName": network,
+    }
+    
+    # Add optional parameters if provided
+    if name is not None:
+        payload["name"] = name
+    if description is not None:
+        payload["description"] = description
+    if setup_id is not None:
+        payload["setupId"] = setup_id
+    if setup_name is not None:
+        payload["setupName"] = setup_name
+    if url is not None:  # Now correctly checks the parameter, not the API URL
+        payload["url"] = url
+    if model is not None:
+        payload["model"] = model
+    if userdata is not None:
+        payload["userdata"] = userdata
+    
+    return _put_request(url=api_url, params={"_id": record_id}, payload=payload)
+
+def delete_provisioning_record(record_id: str | None=None, serial_number: str | None=None) -> dict:
+    '''Deletes a provisioning record from BSN Cloud by either record_id or serial_number
+    Args:
+        record_id (str | None): The unique identifier of the device record to delete.
+        serial_number (str | None): The serial number of the device to delete.
+
+    If both record_id and serial_number are provided, record_id will be used.
+        
+    Returns:
+        dict: Response from the BSN.cloud API or error dict.
+    
+    Raises: ValueError if neither record_id nor serial_number is provided. '''
+    if not record_id and not serial_number:
+        raise ValueError("Either 'record_id' or 'serial_number' must be provided.")
+
+    api_url = 'https://provision.bsn.cloud/rest-device/v2/device/'
+
+    if record_id:
+        params = {"_id": record_id}
+    else:
+        params = {"serial": serial_number}
+
+    return _delete_request(url=api_url, params=params)
+
+def delete_provisioning_records(ids: list[str]) -> dict:
+    '''Deletes multiple provisioning records from BSN Cloud by their IDs
+    Args:
+        ids (list[str]): The list of unique identifiers of the device records to delete.
+
+    Returns:
+        dict: Response from the BSN.cloud API or error dict.'''
+
+    if len(ids) == 0:
+        raise ValueError("The list of IDs must not be empty.")
+
+    api_url = 'https://provision.bsn.cloud/rest-device/v2/device/'
+
+    params = {"_ids": ids}
+
+    return _delete_request(url=api_url, params=params)
+
+
 # ---------------------------------- Remote DWS API ----------------------------------
 # This section uses the Remote DWS endpoints and is intended to include all endpoints, but is currently not complete. 
 
