@@ -20,6 +20,11 @@ A comprehensive Python library for interacting with the BrightSign Network (BSN)
 pip install bsn-cloud-api
 ```
 
+If you wish to install the test version of this package (1.1.1) install it using the following command:
+```bash
+pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ bsn-cloud-api
+```
+
 ## Quick Start
 
 ### Method 1: Using Environment Variables (Recommended)
@@ -132,6 +137,46 @@ bsn.reboot_device("SERIAL123")
 bsn.reboot_device("SERIAL123", factory_reset=True)
 ```
 
+### Provisioning Records
+```python
+# Get all provisioning records (paginated)
+records = bsn.get_provisioning_records(page_number=1, page_size=100)
+
+# Get a specific provisioning record
+record = bsn.get_provisioning_record(serial_number="ABC123")
+# or by record ID
+record = bsn.get_provisioning_record(record_id="507f1f77bcf86cd799439011")
+
+# Create a new provisioning record
+bsn.create_provisioning_record(
+    serial_number="ABC123",
+    username="admin",
+    setup_id="12345",
+    name="Lobby Display",
+    description="Main entrance display"
+)
+
+# Update an existing provisioning record
+bsn.update_provisioning_record(
+    record_id="507f1f77bcf86cd799439011",
+    serial_number="ABC123",
+    username="admin",
+    name="Updated Lobby Display"
+)
+
+# Delete a provisioning record
+bsn.delete_provisioning_record(serial_number="ABC123")
+# or by record ID
+bsn.delete_provisioning_record(record_id="507f1f77bcf86cd799439011")
+
+# Delete multiple provisioning records
+ids_to_delete = [
+    "507f1f77bcf86cd799439011",
+    "507f1f77bcf86cd799439012"
+]
+bsn.delete_provisioning_records(ids_to_delete)
+```
+
 ### File Operations
 
 ```python
@@ -237,11 +282,13 @@ bsn.download_device_firmware(
 )
 ```
 
-## API Documentation
+# API Documentation
 
 For complete API documentation, see the [BSN Cloud API Documentation](https://docs.brightsign.biz/developers/cloud-apis).
 
-### Available Functions by Category
+## Available Functions by Category
+
+### Unorganized BSN Cloud Platform Endpoints
 
 #### Authentication
 - `configure()` - Set credentials programmatically
@@ -253,6 +300,24 @@ The API session is lazily initialized. No authentication or network requests occ
 #### Device Management
 - `get_devices()` - List all devices
 - `get_setups()` - List setups/presentations
+
+### B-Deploy Endpoints (Setups and Provisioning)
+
+#### Device Provisioning
+
+- `get_provisioning_records()` - Get paginated list of provisioning records
+- `get_provisioning_record()` - Get single record by ID or serial number
+  - Raises `ValueError` if neither `record_id` nor `serial_number` provided
+- `create_provisioning_record()` - Create new provisioning record
+  - Raises `ValueError` if neither `setup_id` nor `setup_name` provided
+- `update_provisioning_record()` - Update existing provisioning record
+  - Raises `ValueError` if neither `setup_id` nor `setup_name` provided
+- `delete_provisioning_record()` - Delete single provisioning record
+  - Raises `ValueError` if neither `record_id` nor `serial_number` provided
+- `delete_provisioning_records()` - Delete multiple provisioning records
+  - Raises `ValueError` if `ids` list is empty
+
+### Remote DWS Endpoints
 
 #### Control Endpoints
 - `reboot_device()` - Reboot or factory reset
@@ -332,8 +397,11 @@ The API session is lazily initialized. No authentication or network requests occ
 
 ## Error Handling
 
-The library returns error dictionaries when requests fail:
+The library uses two approaches for error handling:
 
+### API/Network Errors (Returned as Dictionaries)
+
+API failures and network issues are returned as error dictionaries:
 ```python
 result = bsn.get_device_files("INVALID_SERIAL", storage_type="sd")
 
@@ -342,6 +410,71 @@ if "error" in result:
 else:
     # Success - process result
     files = result['data']['result']
+```
+
+### Input Validation Errors (Raised as Exceptions)
+
+Invalid function arguments raise Python exceptions immediately:
+```python
+try:
+    # Missing required parameter
+    bsn.create_provisioning_record(
+        serial_number="ABC123",
+        username="admin"
+        # Missing setup_id or setup_name!
+    )
+except ValueError as e:
+    print(f"Validation error: {e}")
+    # Output: "Either 'setup_id' or 'setup_name' must be provided."
+
+try:
+    # Invalid storage type
+    bsn.reformat_device_storage("ABC123", device_name="invalid")
+except ValueError as e:
+    print(f"Validation error: {e}")
+    # Output: "Invalid device_name: 'invalid'. Must be one of: sd, usb, ssd"
+
+try:
+    # Missing file
+    bsn.put_device_files("ABC123", local_file_path="/nonexistent/file.mp4")
+except FileNotFoundError as e:
+    print(f"File error: {e}")
+    # Output: "File not found: '/nonexistent/file.mp4'"
+```
+
+### Common Exceptions
+
+| Exception | When It's Raised | Example |
+|-----------|------------------|---------|
+| `ValueError` | Invalid parameter values or missing required parameters | Missing `setup_id`/`setup_name`, invalid `storage_type` |
+| `FileNotFoundError` | Specified file doesn't exist | File path in `put_device_files()` |
+
+### Error Handling Best Practice
+```python
+import bsn_cloud_api as bsn
+
+try:
+    # Input validation happens here (raises exceptions)
+    result = bsn.create_provisioning_record(
+        serial_number="ABC123",
+        username="admin",
+        setup_id="12345"
+    )
+    
+    # API/network errors are in the result dictionary
+    if "error" in result:
+        print(f"API Error: {result['error']}")
+        print(f"Details: {result['details']}")
+    else:
+        print("Success!")
+        print(result)
+        
+except ValueError as e:
+    print(f"Invalid input: {e}")
+except FileNotFoundError as e:
+    print(f"File not found: {e}")
+except Exception as e:
+    print(f"Unexpected error: {e}")
 ```
 
 ## Requirements
