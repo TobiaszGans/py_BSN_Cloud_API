@@ -37,6 +37,14 @@ from .api import (
     get_devices,
     get_setups,
     
+    # B-Deploy Endpoints
+    get_provisioning_records,
+    get_provisioning_record,
+    create_provisioning_record,
+    update_provisioning_record,
+    delete_provisioning_record,
+    delete_provisioning_records,
+
     # DWS Password Control
     get_device_local_dws_status,
     set_device_local_dws,
@@ -132,6 +140,14 @@ __all__ = [
     # Device Management
     'get_devices',
     'get_setups',
+
+    # B-Deploy Endpoints
+    get_provisioning_records,
+    get_provisioning_record,
+    create_provisioning_record,
+    update_provisioning_record,
+    delete_provisioning_record,
+    delete_provisioning_records,
     
     # Control Endpoints
 

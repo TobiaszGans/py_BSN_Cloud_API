@@ -20,7 +20,7 @@ A comprehensive Python library for interacting with the BrightSign Network (BSN)
 pip install bsn-cloud-api
 ```
 
-If you wish to install the test version of this package (1.1.0) install it using the following command:
+If you wish to install the test version of this package (1.1.1) install it using the following command:
 ```bash
 pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ bsn-cloud-api
 ```
