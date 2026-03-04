@@ -168,6 +168,46 @@ ids_to_delete = [
 bsn.delete_provisioning_records(ids_to_delete)
 ```
 
+### Provisioning Records
+```python
+# Get all provisioning records (paginated)
+records = bsn.get_provisioning_records(page_number=1, page_size=100)
+
+# Get a specific provisioning record
+record = bsn.get_provisioning_record(serial_number="ABC123")
+# or by record ID
+record = bsn.get_provisioning_record(record_id="507f1f77bcf86cd799439011")
+
+# Create a new provisioning record
+bsn.create_provisioning_record(
+    serial_number="ABC123",
+    username="admin",
+    setup_id="12345",
+    name="Lobby Display",
+    description="Main entrance display"
+)
+
+# Update an existing provisioning record
+bsn.update_provisioning_record(
+    record_id="507f1f77bcf86cd799439011",
+    serial_number="ABC123",
+    username="admin",
+    name="Updated Lobby Display"
+)
+
+# Delete a provisioning record
+bsn.delete_provisioning_record(serial_number="ABC123")
+# or by record ID
+bsn.delete_provisioning_record(record_id="507f1f77bcf86cd799439011")
+
+# Delete multiple provisioning records
+ids_to_delete = [
+    "507f1f77bcf86cd799439011",
+    "507f1f77bcf86cd799439012"
+]
+bsn.delete_provisioning_records(ids_to_delete)
+```
+
 ### File Operations
 
 ```python
@@ -320,6 +360,24 @@ The API session is lazily initialized. No authentication or network requests occ
 #### Logs Endpoints
 - `get_device_logs()` - Get device logs
 - `get_device_crash_dumps()` - Get device crash dump
+
+### B-Deploy Endpoints (Setups and Provisioning)
+
+#### Device Provisioning
+
+- `get_provisioning_records()` - Get paginated list of provisioning records
+- `get_provisioning_record()` - Get single record by ID or serial number
+  - Raises `ValueError` if neither `record_id` nor `serial_number` provided
+- `create_provisioning_record()` - Create new provisioning record
+  - Raises `ValueError` if neither `setup_id` nor `setup_name` provided
+- `update_provisioning_record()` - Update existing provisioning record
+  - Raises `ValueError` if neither `setup_id` nor `setup_name` provided
+- `delete_provisioning_record()` - Delete single provisioning record
+  - Raises `ValueError` if neither `record_id` nor `serial_number` provided
+- `delete_provisioning_records()` - Delete multiple provisioning records
+  - Raises `ValueError` if `ids` list is empty
+
+### Remote DWS Endpoints
 
 #### Control Endpoints
 - `put_device_reboot()` - Reboot, factory reset, or reboot with options
