@@ -20,7 +20,7 @@ A comprehensive Python library for interacting with the BrightSign Network (BSN)
 pip install bsn-cloud-api
 ```
 
-If you wish to install the test version of this package (1.1.1) install it using the following command:
+If you wish to install the test version of this package install it using the following command:
 ```bash
 pip install --index-url https://test.pypi.org/simple/ --extra-index-url https://pypi.org/simple/ bsn-cloud-api
 ```
@@ -46,7 +46,7 @@ import bsn_cloud_api as bsn
 devices = bsn.get_devices()
 
 # Reboot a player
-result = bsn.reboot_device("SERIAL123")
+result = bsn.put_device_reboot("SERIAL123")
 
 # Upload a file to a player
 bsn.put_device_files(
@@ -126,15 +126,46 @@ devices = bsn.get_devices()
 
 # Get devices filtered by site
 devices = bsn.get_devices(description="London HQ")
+```
 
-# Get specific device info
-device = bsn.get_device("SERIAL123")
+### Provisioning Records
+```python
+# Get all provisioning records (paginated)
+records = bsn.get_provisioning_records(page_number=1, page_size=100)
 
-# Reboot a device
-bsn.reboot_device("SERIAL123")
+# Get a specific provisioning record
+record = bsn.get_provisioning_record(serial_number="ABC123")
+# or by record ID
+record = bsn.get_provisioning_record(record_id="507f1f77bcf86cd799439011")
 
-# Factory reset a device
-bsn.reboot_device("SERIAL123", factory_reset=True)
+# Create a new provisioning record
+bsn.create_provisioning_record(
+    serial_number="ABC123",
+    username="admin",
+    setup_id="12345",
+    name="Lobby Display",
+    description="Main entrance display"
+)
+
+# Update an existing provisioning record
+bsn.update_provisioning_record(
+    record_id="507f1f77bcf86cd799439011",
+    serial_number="ABC123",
+    username="admin",
+    name="Updated Lobby Display"
+)
+
+# Delete a provisioning record
+bsn.delete_provisioning_record(serial_number="ABC123")
+# or by record ID
+bsn.delete_provisioning_record(record_id="507f1f77bcf86cd799439011")
+
+# Delete multiple provisioning records
+ids_to_delete = [
+    "507f1f77bcf86cd799439011",
+    "507f1f77bcf86cd799439012"
+]
+bsn.delete_provisioning_records(ids_to_delete)
 ```
 
 ### Provisioning Records
@@ -300,6 +331,35 @@ The API session is lazily initialized. No authentication or network requests occ
 #### Device Management
 - `get_devices()` - List all devices
 - `get_setups()` - List setups/presentations
+- `update_setup()` - Update a setup
+
+### B-Deploy Endpoints (Setups and Provisioning)
+
+#### Device Provisioning
+
+- `get_provisioning_records()` - Get paginated list of provisioning records
+- `get_provisioning_record()` - Get single record by ID or serial number
+  - Raises `ValueError` if neither `record_id` nor `serial_number` provided
+- `create_provisioning_record()` - Create new provisioning record
+  - Raises `ValueError` if neither `setup_id` nor `setup_name` provided
+- `update_provisioning_record()` - Update existing provisioning record
+  - Raises `ValueError` if neither `setup_id` nor `setup_name` provided
+- `delete_provisioning_record()` - Delete single provisioning record
+  - Raises `ValueError` if neither `record_id` nor `serial_number` provided
+- `delete_provisioning_records()` - Delete multiple provisioning records
+  - Raises `ValueError` if `ids` list is empty
+
+### Remote DWS Endpoints
+
+#### Information Endpoints
+- `get_device_info()` - Get general device information
+- `get_device_time()` - Get device date and time
+- `put_device_time()` - Set device date and time
+- `get_device_health()` - Check device health/reachability
+
+#### Logs Endpoints
+- `get_device_logs()` - Get device logs
+- `get_device_crash_dumps()` - Get device crash dump
 
 ### B-Deploy Endpoints (Setups and Provisioning)
 
@@ -320,7 +380,9 @@ The API session is lazily initialized. No authentication or network requests occ
 ### Remote DWS Endpoints
 
 #### Control Endpoints
-- `reboot_device()` - Reboot or factory reset
+- `put_device_reboot()` - Reboot, factory reset, or reboot with options
+
+#### DWS Password Control
 - `get_device_password()` - Get DWS password status
 - `put_device_password()` - Set DWS password
 - `get_device_local_dws_status()` - Check local DWS status
@@ -387,13 +449,14 @@ The API session is lazily initialized. No authentication or network requests occ
 - `get_display_contrast()` / `set_display_contrast()` - Contrast
 - `get_display_volume()` / `set_display_volume()` - Volume
 - `get_display_power_settings()` / `set_display_power_settings()` - Power
+- `get_display_standby_timeout()` / `set_display_standby_timeout()` - Standby timeout
 - `get_display_white_balance()` / `set_display_white_balance()` - Color
-- `get_display_video_output()` / `set_display_video_output()` - Output
+- `get_display_video_output()` / `set_display_video_output()` - Video output
+- `get_display_sd_connection()` / `set_display_sd_connection()` - SD card control
 - `get_display_always_connected()` / `set_display_always_connected()` - Connection
 - `get_display_always_on()` / `set_display_always_on()` - Always on
 - `update_display_firmware()` - Firmware update
 - `get_display_info()` - Display information
-- And more...
 
 ## Error Handling
 

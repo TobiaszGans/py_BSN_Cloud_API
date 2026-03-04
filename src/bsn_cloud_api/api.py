@@ -322,17 +322,30 @@ def _get_valid_login() -> Login:
 
 # ---------------------------------- BSN Cloud API ----------------------------------
 # This section is very incomplete and only has a few functions
-def get_devices(description: str | None = None) -> dict:
+def get_devices(serial:str | None= None, description: str | None = None) -> dict:
     """Gets a dict of devices from the BSN Cloud API."""
     url = 'https://api.bsn.cloud/2022/06/REST/Devices/'
     params = {}
-    if description:
+    if serial:
+        filter_str = f"[Serial] IS '{serial}'"
+    elif description:
         filter_str = f"[Description] IS '*{description}*'"
         params['filter'] = filter_str
     params['sort'] = "[Settings].[Name] ASC"
     params['pageSize'] = "100"
 
     return _get_request(url=url, params=params)
+
+def get_device(serial_number: str | None=None, id: str | None=None) -> dict:
+    """Gets a single device by serial number or ID from the BSN Cloud API."""
+    if not serial_number and not id:
+        raise ValueError("Either 'serial_number' or 'id' must be provided.")
+    url = f'https://api.bsn.cloud/2022/06/REST/Devices/'
+    if serial_number:
+        url = url + str(serial_number)
+    elif id:
+        url = url + str(id)
+    return _get_request(url=url)
 
 def get_setups(page_number:int=1, page_size:int=100, network_name:str | None=None) -> dict:
     """Gets a dict of setups from the BSN Cloud API."""
@@ -1109,7 +1122,7 @@ def rename_device_file(serial_number: str, path: str, new_name: str, storage_typ
             f"Got: '{new_name}'"
         )
     
-    url = f"https://ws.bsn.cloud/rest/v1/files/{storage_type}/{path.lstrip('/')}/"
+    url = f"https://ws.bsn.cloud/rest/v1/files/{storage_type}/{path.lstrip('/')}"
     params = {
         "destinationType": "player",
         "destinationName": serial_number,
@@ -1151,7 +1164,7 @@ def delete_device_file(serial_number: str, path: str, storage_type: str = "sd") 
             f"Must be one of: {', '.join(valid_storage_types)}"
         )
     
-    url = f"https://ws.bsn.cloud/rest/v1/files/{storage_type}/{path.lstrip('/')}/"
+    url = f"https://ws.bsn.cloud/rest/v1/files/{storage_type}/{path.lstrip('/')}"
     params = {
         "destinationType": "player",
         "destinationName": serial_number

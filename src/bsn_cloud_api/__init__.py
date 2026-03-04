@@ -22,7 +22,7 @@ Example usage:
     bsn.reboot_device("SERIAL123")
 """
 
-__version__ = "1.0.0"
+__version__ = "1.2.0"
 __author__ = "Tobiasz Gans"
 __email__ = "tobgan@icloud.com"
 __license__ = "MIT"
@@ -35,7 +35,9 @@ from .api import (
     
     # Device Management
     get_devices,
+    get_device,
     get_setups,
+    update_setup,
     
     # B-Deploy Endpoints
     get_provisioning_records,
@@ -44,6 +46,19 @@ from .api import (
     update_provisioning_record,
     delete_provisioning_record,
     delete_provisioning_records,
+
+    # DWS Information Endpoints
+    get_device_info,
+    get_device_time,
+    put_device_time,
+    get_device_health,
+
+    # Logs Endpoints
+    get_device_logs,
+    get_device_crash_dumps,
+
+    # Control Endpoints
+    put_device_reboot,
 
     # DWS Password Control
     get_device_local_dws_status,
@@ -139,18 +154,32 @@ __all__ = [
     
     # Device Management
     'get_devices',
+    'get_device',
     'get_setups',
+    'update_setup',
 
     # B-Deploy Endpoints
-    get_provisioning_records,
-    get_provisioning_record,
-    create_provisioning_record,
-    update_provisioning_record,
-    delete_provisioning_record,
-    delete_provisioning_records,
-    
-    # Control Endpoints
+    'get_provisioning_records',
+    'get_provisioning_record',
+    'create_provisioning_record',
+    'update_provisioning_record',
+    'delete_provisioning_record',
+    'delete_provisioning_records',
 
+    # DWS Information Endpoints
+    'get_device_info',
+    'get_device_time',
+    'put_device_time',
+    'get_device_health',
+
+    # Logs Endpoints
+    'get_device_logs',
+    'get_device_crash_dumps',
+
+    # Control Endpoints
+    'put_device_reboot',
+
+    # DWS Password Control
     'get_device_local_dws_status',
     'set_device_local_dws',
     'reset_device_ssh_host_keys',
