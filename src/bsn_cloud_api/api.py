@@ -1122,7 +1122,7 @@ def rename_device_file(serial_number: str, path: str, new_name: str, storage_typ
             f"Got: '{new_name}'"
         )
     
-    url = f"https://ws.bsn.cloud/rest/v1/files/{storage_type}/{path.lstrip('/')}/"
+    url = f"https://ws.bsn.cloud/rest/v1/files/{storage_type}/{path.lstrip('/')}"
     params = {
         "destinationType": "player",
         "destinationName": serial_number,

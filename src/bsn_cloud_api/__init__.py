@@ -22,7 +22,7 @@ Example usage:
     bsn.reboot_device("SERIAL123")
 """
 
-__version__ = "1.1.5"
+__version__ = "1.1.6"
 __author__ = "Tobiasz Gans"
 __email__ = "tobgan@icloud.com"
 __license__ = "MIT"
