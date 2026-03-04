@@ -22,7 +22,7 @@ Example usage:
     bsn.reboot_device("SERIAL123")
 """
 
-__version__ = "1.1.4"
+__version__ = "1.1.5"
 __author__ = "Tobiasz Gans"
 __email__ = "tobgan@icloud.com"
 __license__ = "MIT"
@@ -35,6 +35,7 @@ from .api import (
     
     # Device Management
     get_devices,
+    get_device,
     get_setups,
     update_setup,
     
@@ -153,6 +154,7 @@ __all__ = [
     
     # Device Management
     'get_devices',
+    'get_device',
     'get_setups',
     'update_setup',
 

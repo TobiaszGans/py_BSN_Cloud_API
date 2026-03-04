@@ -336,6 +336,17 @@ def get_devices(serial:str | None= None, description: str | None = None) -> dict
 
     return _get_request(url=url, params=params)
 
+def get_device(serial_number: str | None=None, id: str | None=None) -> dict:
+    """Gets a single device by serial number or ID from the BSN Cloud API."""
+    if not serial_number and not id:
+        raise ValueError("Either 'serial_number' or 'id' must be provided.")
+    url = f'https://api.bsn.cloud/2022/06/REST/Devices/'
+    if serial_number:
+        url = url + str(serial_number)
+    elif id:
+        url = url + str(id)
+    return _get_request(url=url)
+
 def get_setups(page_number:int=1, page_size:int=100, network_name:str | None=None) -> dict:
     """Gets a dict of setups from the BSN Cloud API."""
     if network_name is None:
