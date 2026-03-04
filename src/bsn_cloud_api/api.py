@@ -1164,7 +1164,7 @@ def delete_device_file(serial_number: str, path: str, storage_type: str = "sd") 
             f"Must be one of: {', '.join(valid_storage_types)}"
         )
     
-    url = f"https://ws.bsn.cloud/rest/v1/files/{storage_type}/{path.lstrip('/')}/"
+    url = f"https://ws.bsn.cloud/rest/v1/files/{storage_type}/{path.lstrip('/')}"
     params = {
         "destinationType": "player",
         "destinationName": serial_number

@@ -5,7 +5,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="bsn-cloud-api",
-    version="1.1.6",
+    version="1.1.7",
     author="Tobiasz Gans",
     author_email="tobgan@icloud.com",
     description="A comprehensive Python library for the BrightSign Network (BSN) Cloud API",
