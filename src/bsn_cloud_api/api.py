@@ -322,11 +322,13 @@ def _get_valid_login() -> Login:
 
 # ---------------------------------- BSN Cloud API ----------------------------------
 # This section is very incomplete and only has a few functions
-def get_devices(description: str | None = None) -> dict:
+def get_devices(serial:str | None= None, description: str | None = None) -> dict:
     """Gets a dict of devices from the BSN Cloud API."""
     url = 'https://api.bsn.cloud/2022/06/REST/Devices/'
     params = {}
-    if description:
+    if serial:
+        filter_str = f"[Serial] IS '{serial}'"
+    elif description:
         filter_str = f"[Description] IS '*{description}*'"
         params['filter'] = filter_str
     params['sort'] = "[Settings].[Name] ASC"
