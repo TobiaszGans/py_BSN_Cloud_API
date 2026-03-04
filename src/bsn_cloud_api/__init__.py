@@ -22,7 +22,7 @@ Example usage:
     bsn.reboot_device("SERIAL123")
 """
 
-__version__ = "1.0.0"
+__version__ = "1.1.2"
 __author__ = "Tobiasz Gans"
 __email__ = "tobgan@icloud.com"
 __license__ = "MIT"
@@ -44,6 +44,12 @@ from .api import (
     update_provisioning_record,
     delete_provisioning_record,
     delete_provisioning_records,
+
+    # DWS Information Endpoints
+    get_device_info,
+    get_device_time,
+    put_device_time,
+    get_device_health,
 
     # DWS Password Control
     get_device_local_dws_status,
@@ -148,6 +154,12 @@ __all__ = [
     update_provisioning_record,
     delete_provisioning_record,
     delete_provisioning_records,
+
+    # DWS Information Endpoints
+    get_device_info,
+    get_device_time,
+    put_device_time,
+    get_device_health,
     
     # Control Endpoints
 
