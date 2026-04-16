@@ -22,7 +22,7 @@ Example usage:
     bsn.reboot_device("SERIAL123")
 """
 
-__version__ = "1.2.1"
+__version__ = "1.2.2"
 __author__ = "Tobiasz Gans"
 __email__ = "tobgan@icloud.com"
 __license__ = "MIT"
@@ -74,6 +74,7 @@ from .api import (
     create_device_directory,
     rename_device_file,
     delete_device_file,
+    device_format_storage,
     
     # Diagnostic Endpoints
     get_device_diagnostics,
@@ -193,6 +194,7 @@ __all__ = [
     'create_device_directory',
     'rename_device_file',
     'delete_device_file',
+    'device_format_storage',
     
     # Diagnostic Endpoints
     'get_device_diagnostics',

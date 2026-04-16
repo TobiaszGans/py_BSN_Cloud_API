@@ -396,6 +396,7 @@ The API session is lazily initialized. No authentication or network requests occ
 - `create_device_directory()` - Create directories
 - `rename_device_file()` - Rename files
 - `delete_device_file()` - Delete files
+- `device_format_storage` - Formats the storage medium
 
 #### Diagnostic Endpoints
 - `get_device_diagnostics()` - Full network diagnostics
