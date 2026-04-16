@@ -1172,6 +1172,49 @@ def delete_device_file(serial_number: str, path: str, storage_type: str = "sd") 
     
     return _delete_request(url=url, params=params)
 
+def device_format_storage(serial_number: str, storage_type: str = "sd", file_system: str = "exfat") -> dict:
+    '''
+    Formats the storage on a BrightSign player.
+    
+    Args:
+        serial_number (str): The serial number of the target player.
+        storage_type (str, optional): The storage medium. Valid values: "sd", "usb", "ssd". 
+            Defaults to "sd".
+        file_system (str, optional): The file system to format with. Defaults to "exfat" options: "exfat", "fat32", "ext4".
+    
+    Returns:
+        dict: Response from the BSN.cloud API.
+    
+    Raises:
+        ValueError: If storage_type is not one of the valid options.
+    
+    Example:
+        >>> device_format_storage("ABC123", storage_type="sd", file_system="exfat")
+    '''
+    valid_storage_types = ["sd", "usb", "ssd"]
+    if storage_type not in valid_storage_types:
+        raise ValueError(
+            f"Invalid storage_type: '{storage_type}'. "
+            f"Must be one of: {', '.join(valid_storage_types)}"
+        )
+    valid_file_systems = ["exfat", "fat32", "ext4"]
+    if file_system not in valid_file_systems:
+        raise ValueError(
+            f"Invalid file_system: '{file_system}'. "
+            f"Must be one of: {', '.join(valid_file_systems)}"
+        )
+
+    url = f"https://ws.bsn.cloud/rest/v1/storage/{storage_type}/"
+    params = {
+        "destinationType": "player",
+        "destinationName": serial_number
+    }
+    payload = {
+        "fs": file_system
+    }
+
+    return _delete_request(url=url, params=params, payload=payload)
+
 # Diagnostic Endpoints
 def get_device_diagnostics(serial_number: str) -> dict:
     '''
