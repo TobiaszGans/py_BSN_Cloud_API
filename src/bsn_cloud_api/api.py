@@ -8,6 +8,7 @@ import datetime
 import re
 import base64
 from typing import Any
+from urllib.parse import urlencode
 
 # Global Variables
 _current_login = None
@@ -932,11 +933,13 @@ def get_device_files(serial_number:str, storage_type:str="sd", path:str | None=N
         "destinationType": "player",
         "destinationName": serial_number
     }
+
+    query = urlencode(params)
     if raw:
-        params['raw'] = True
+        query += "&raw"
     if contents:
-        params['contents'] = True
-    return _get_request(url=url, params=params)
+        query += "&contents"
+    return _get_request(url=url + f"?{query}")
 
 
 def put_device_files(serial_number: str, local_file_path: str, storage_type: str = "sd", 
